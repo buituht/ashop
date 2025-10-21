@@ -41,4 +41,7 @@ public interface UserService {
     boolean delete(int id);
     
     User login(String username, String rawPassword);
+    boolean checkExistEmail(String email);
+    boolean checkExistUsername(String username);
+    boolean register(String username, String password, String fullName, String email, String phone, String address, String role, Boolean status, String avatar);
 }
