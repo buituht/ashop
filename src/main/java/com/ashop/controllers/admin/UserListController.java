@@ -17,7 +17,7 @@ public class UserListController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
     // Khởi tạo Service
-    private final UserService userService = new UserServiceImpl(); // Thay thế bằng cách inject thực tế nếu dùng Spring/CDI
+    private final UserService userService = new UserServiceImpl(); 
 
     // Thiết lập phân trang mặc định
     private static final int ITEMS_PER_PAGE = 10;
@@ -55,7 +55,6 @@ public class UserListController extends HttpServlet {
             request.setAttribute("totalItems", totalUsers);
             
             // 5. Chuyển tiếp tới trang JSP
-            // Giả định trang JSP là /views/admin/user-list.jsp (hoặc tương tự)
             request.getRequestDispatcher("/views/admin/user-list.jsp").forward(request, response);
             
         } catch (Exception e) {
