@@ -55,6 +55,3 @@
         </div>
     </div>
 </nav>
-
-<%-- Đặt thẻ script này ở cuối file layout (footer.jsp) --%>
-<%-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> --%>
