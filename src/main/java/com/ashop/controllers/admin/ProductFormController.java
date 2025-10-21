@@ -70,6 +70,9 @@ public class ProductFormController extends HttpServlet {
         request.getRequestDispatcher("/views/admin/product-form.jsp").forward(request, response);
     }
 
+
+
+    
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
 
@@ -82,20 +85,24 @@ public class ProductFormController extends HttpServlet {
         String imagePath = null;
         String oldImage = request.getParameter("oldImage"); 
 
+        // --- Bắt đầu khối TRY (Áp dụng safe parsing) ---
         try {
-            // 1. Lấy dữ liệu cơ bản
+            // 1. Lấy dữ liệu cơ bản và áp dụng SAFE PARSING
             String productName = request.getParameter("productName");
             String description = request.getParameter("description");
-            Integer categoryId = Integer.parseInt(request.getParameter("categoryId"));
-            BigDecimal price = new BigDecimal(request.getParameter("price"));
-            BigDecimal salePrice = new BigDecimal(request.getParameter("salePrice"));
-            Integer quantity = Integer.parseInt(request.getParameter("quantity"));
+            
+            // Dùng safeParseInteger và safeParseBigDecimal
+            Integer categoryId = safeParseInteger(request.getParameter("categoryId")); 
+            BigDecimal price = safeParseBigDecimal(request.getParameter("price")); 
+            BigDecimal salePrice = safeParseBigDecimal(request.getParameter("salePrice")); 
+            Integer quantity = safeParseInteger(request.getParameter("quantity"));
+            
             boolean status = "on".equalsIgnoreCase(request.getParameter("status"));
             
             // 2. Xử lý Slug
             String slug = SlugUtil.toSlug(productName); 
             
-            // 3. Xử lý Upload File
+            // 3. Xử lý Upload File (Giữ nguyên logic upload)
             Part filePart = request.getPart("imageFile"); 
             if (filePart != null && filePart.getSize() > 0) {
                 String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
@@ -110,13 +117,13 @@ public class ProductFormController extends HttpServlet {
                 filePart.write(filePath.toString());
                 imagePath = UPLOAD_DIR + fileName;
             } else {
-                imagePath = oldImage; // Giữ lại ảnh cũ
+                imagePath = oldImage;
             }
             
             // 4. Lấy đối tượng Category
             Category category = categoryService.findById(categoryId);
             if (category == null) {
-                 throw new IllegalArgumentException("Danh mục không hợp lệ.");
+                 throw new IllegalArgumentException("Danh mục không hợp lệ hoặc không tồn tại.");
             }
 
             // --- Logic CẬP NHẬT (EDIT) ---
@@ -128,6 +135,7 @@ public class ProductFormController extends HttpServlet {
                     throw new RuntimeException("Không tìm thấy sản phẩm để cập nhật.");
                 }
 
+                // Cập nhật Entity
                 product.setProductName(productName);
                 product.setSlug(slug);
                 product.setPrice(price);
@@ -142,8 +150,18 @@ public class ProductFormController extends HttpServlet {
 
             // --- Logic THÊM MỚI (ADD) ---
             } else {
-                product = new Product(null, productName, slug, price, salePrice, quantity, description, imagePath, status);
+                // Constructor mới (chỉ có các tham số chính)
+                product = new Product();
+                product.setProductName(productName);
+                product.setSlug(slug);
+                product.setPrice(price);
+                product.setSalePrice(salePrice);
+                product.setQuantity(quantity);
+                product.setDescription(description);
+                product.setImage(imagePath);
+                product.setStatus(status);
                 product.setCategory(category);
+                
                 message = "Thêm mới sản phẩm **" + productName + "** thành công!";
             }
             
@@ -156,31 +174,67 @@ public class ProductFormController extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Lỗi xử lý: " + e.getMessage());
             
-            // Đặt lại danh sách Category và dữ liệu Product để hiển thị lại form
+            // --- BẮT ĐẦU KHỐI CATCH (TÁI TẠO DỮ LIỆU) ---
+            
+            // 1. Tái tạo dữ liệu form an toàn
             request.setAttribute("categories", categoryService.findAll());
-            Product errorProduct = new Product(
-                servletPath.equals("/admin/product/edit") ? Integer.valueOf(request.getParameter("productId")) : null, 
-                request.getParameter("productName"), 
-                request.getParameter("slug") != null ? request.getParameter("slug") : SlugUtil.toSlug(request.getParameter("productName")),
-                new BigDecimal(request.getParameter("price")), 
-                new BigDecimal(request.getParameter("salePrice")), 
-                Integer.parseInt(request.getParameter("quantity")), 
-                request.getParameter("description"), 
-                imagePath != null ? imagePath : oldImage,
-                "on".equalsIgnoreCase(request.getParameter("status"))
-            );
             
-            // Cần set lại Category cho errorProduct để Dropdown hiển thị đúng lựa chọn cũ
-            if (request.getParameter("categoryId") != null) {
+            Product errorProduct = new Product();
+            
+            // Lấy ID nếu là EDIT
+            if (servletPath.equals("/admin/product/edit") && request.getParameter("productId") != null) {
+                errorProduct.setProductId(safeParseInteger(request.getParameter("productId")));
+            }
+            
+            // Gán các giá trị AN TOÀN từ request
+            errorProduct.setProductName(request.getParameter("productName"));
+            errorProduct.setPrice(safeParseBigDecimal(request.getParameter("price")));
+            errorProduct.setSalePrice(safeParseBigDecimal(request.getParameter("salePrice")));
+            errorProduct.setQuantity(safeParseInteger(request.getParameter("quantity")));
+            errorProduct.setDescription(request.getParameter("description"));
+            errorProduct.setImage(imagePath != null ? imagePath : oldImage);
+            errorProduct.setStatus("on".equalsIgnoreCase(request.getParameter("status"))); 
+            
+            // Set lại Category cho Dropdown
+            String errorCategoryIdStr = request.getParameter("categoryId");
+            if (errorCategoryIdStr != null && !errorCategoryIdStr.isEmpty()) {
                 try {
-                    errorProduct.setCategory(categoryService.findById(Integer.parseInt(request.getParameter("categoryId"))));
+                    Integer errCategoryId = safeParseInteger(errorCategoryIdStr);
+                    if (errCategoryId != 0) {
+                        errorProduct.setCategory(categoryService.findById(errCategoryId));
+                    }
                 } catch (Exception ignored) {}
             }
             
+            // 2. Set Attributes và Forward
             request.setAttribute("product", errorProduct);
-            request.getRequestDispatcher("/views/admin/product-form.jsp").forward(request, response);
+            request.setAttribute("error", "Lỗi xử lý: " + e.getMessage());
+            request.getRequestDispatcher("/views/admin/product/product-form.jsp").forward(request, response);
+        }
+    }
+    
+    
+    private BigDecimal safeParseBigDecimal(String param) {
+        if (param == null || param.trim().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        try {
+            return new BigDecimal(param.trim());
+        } catch (NumberFormatException e) {
+            // Trả về 0 hoặc ném lỗi nếu cần, nhưng 0 là an toàn nhất khi xử lý lỗi
+            return BigDecimal.ZERO; 
+        }
+    }
+
+    private Integer safeParseInteger(String param) {
+        if (param == null || param.trim().isEmpty()) {
+            return 0; // Trả về 0 hoặc null nếu cột DB cho phép
+        }
+        try {
+            return Integer.parseInt(param.trim());
+        } catch (NumberFormatException e) {
+            return 0; 
         }
     }
 }
