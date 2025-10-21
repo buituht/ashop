@@ -22,8 +22,7 @@ import com.ashop.entity.User; // <--- Cần Import Entity User mới
 public class AdminFilter implements Filter {
 
  
-    // private static final int ROLE_ADMIN_ID = 1; 
-
+    
     // ==========================================================
     // CÁC PHƯƠNG THỨC VÒNG ĐỜI (Giữ nguyên)
     // ==========================================================
