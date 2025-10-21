@@ -31,11 +31,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User saveOrUpdate(User user) {
-        // Có thể thêm logic nghiệp vụ ở đây, ví dụ:
-        // - Kiểm tra tính hợp lệ của email/username
-        // - Mã hóa mật khẩu nếu là thêm mới/đổi mật khẩu
+   
         if (user.getUserId() == null) {
-            // Logic hash mật khẩu sẽ được thêm vào đây
+            
             // user.setPassword(PasswordUtils.hash(user.getPassword())); 
             return userDAO.create(user);
         } else {
