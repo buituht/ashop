@@ -1,4 +1,4 @@
-package com.ashop.filters; // Giả định package mới
+package com.ashop.filters; 
 
 import java.io.IOException;
 
@@ -15,13 +15,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import com.ashop.entity.User; // <--- Cần Import Entity User mới
-// Không cần import UserModel nữa
+
 
 // Ánh xạ Filter đến TẤT CẢ các URL bắt đầu bằng /admin/
 @WebFilter(urlPatterns="/admin/*")
 public class AdminFilter implements Filter {
 
-    // Bỏ ROLE_ADMIN_ID vì vai trò là chuỗi
+ 
     // private static final int ROLE_ADMIN_ID = 1; 
 
     // ==========================================================
