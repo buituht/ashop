@@ -42,5 +42,4 @@ public class LogoutController extends HttpServlet {
     }
     
     // Yêu cầu logout chỉ cần xử lý bằng GET, không cần doPost()
-    // Nếu bạn muốn xử lý bằng POST (ví dụ: khi nhấn nút logout) thì bạn cần thêm @Override protected void doPost(...)
 }
