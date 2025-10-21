@@ -13,8 +13,7 @@ import java.util.List;
 
 public class UserDAOImpl implements UserDAO {
     
-    // --- KHAI BÁO CÁC PHƯƠNG THỨC DAO ĐÃ TRIỂN KHAI ---
-
+  
     @Override
     public User findById(int id) {
         EntityManager em = JPAConfig.getEntityManager();
@@ -99,7 +98,7 @@ public class UserDAOImpl implements UserDAO {
         }
     }
     
-    // Phương thức remove này nên được sử dụng cẩn thận (thường chỉ thay đổi status)
+   
     @Override
     public void remove(User user) { 
         EntityManager em = JPAConfig.getEntityManager();
@@ -166,7 +165,7 @@ public class UserDAOImpl implements UserDAO {
     public boolean checkExistUsername(String username) {
         EntityManager em = JPAConfig.getEntityManager();
         
-        // JPQL Query: Count users where username matches (username is UNIQUE)
+       
         String jpql = "SELECT COUNT(u) FROM User u WHERE u.username = :username";
         
         try {
@@ -174,7 +173,7 @@ public class UserDAOImpl implements UserDAO {
                            .setParameter("username", username)
                            .getSingleResult();
             
-            // If count is greater than 0, the username exists
+           
             return count > 0;
             
         } catch (Exception e) {
