@@ -75,4 +75,45 @@ public class UserServiceImpl implements UserService {
         }
         return null; // Đăng nhập thất bại
     }
+    @Override
+    public boolean checkExistEmail(String email) {
+        // Delegate the check to the DAO layer
+        return userDAO.checkExistEmail(email); 
+    }
+    
+    @Override
+    public boolean register(String username, String password, String fullName, String email, String phone, String address, String role, Boolean status, String avatar) {
+        try {
+            // NOTE: HASHING MUST BE DONE HERE
+            // String hashedPassword = HashingUtil.hashPassword(password);
+            
+            // 1. Tạo Entity
+            User newUser = new User(); 
+            
+            // 2. Set các giá trị (bao gồm mật khẩu đã hash)
+            newUser.setUsername(username);
+            // newUser.setPassword(hashedPassword); 
+            newUser.setPassword(password); // Tạm thời dùng chuỗi thô nếu chưa có HashingUtil
+            newUser.setFullName(fullName);
+            newUser.setEmail(email);
+            newUser.setPhone(phone);
+            newUser.setAddress(address);
+            newUser.setRole(role);
+            newUser.setStatus(status);
+            // ... set avatar, created_at, etc. ...
+
+            // 3. Gọi DAO để lưu
+            userDAO.create(newUser); 
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    @Override
+    public boolean checkExistUsername(String username) {
+        // Logic sẽ gọi DAO để kiểm tra sự tồn tại
+        return userDAO.checkExistUsername(username); 
+    }
 }
