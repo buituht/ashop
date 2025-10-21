@@ -145,4 +145,44 @@ public class UserDAOImpl implements UserDAO {
         }
     }
     
+    @Override
+    public boolean checkExistEmail(String email) {
+        EntityManager em = JPAConfig.getEntityManager();
+        String jpql = "SELECT COUNT(u) FROM User u WHERE u.email = :email";
+        
+        try {
+            Long count = em.createQuery(jpql, Long.class)
+                           .setParameter("email", email)
+                           .getSingleResult();
+            return count > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+    @Override
+    public boolean checkExistUsername(String username) {
+        EntityManager em = JPAConfig.getEntityManager();
+        
+        // JPQL Query: Count users where username matches (username is UNIQUE)
+        String jpql = "SELECT COUNT(u) FROM User u WHERE u.username = :username";
+        
+        try {
+            Long count = em.createQuery(jpql, Long.class)
+                           .setParameter("username", username)
+                           .getSingleResult();
+            
+            // If count is greater than 0, the username exists
+            return count > 0;
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
+    
 }
