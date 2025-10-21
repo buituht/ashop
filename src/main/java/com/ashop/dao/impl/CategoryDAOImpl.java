@@ -94,7 +94,7 @@ public class CategoryDAOImpl implements CategoryDAO {
         }
     }
     
-    // Lưu ý: Thường nên thay bằng update status=false
+   
     @Override
     public void remove(Category category) { 
         EntityManager em = JPAConfig.getEntityManager();
