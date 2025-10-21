@@ -32,7 +32,7 @@ public class RegisterController extends HttpServlet {
         }
 
         // Chuyển tiếp đến trang JSP đăng ký
-        // Giả định trang JSP là /views/web/register.jsp
+      
         req.getRequestDispatcher("/views/register.jsp").forward(req, resp);
     }
 
@@ -51,12 +51,12 @@ public class RegisterController extends HttpServlet {
         String fullName = req.getParameter("fullname");
         String email = req.getParameter("email");
         String phone = req.getParameter("phone");
-        String address = req.getParameter("address"); // Giả định trường address có trong form
+        String address = req.getParameter("address"); 
         
         // Mặc định cho các trường ẩn/mặc định
         String role = "USER";
         Boolean status = true;
-        String avatar = "default_avatar.png"; // Giả định tên avatar mặc định
+        String avatar = "default_avatar.png"; 
 
         HttpSession session = req.getSession();
         String forwardUrl = "/views/register.jsp";
