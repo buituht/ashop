@@ -14,9 +14,7 @@ public class AdminDashboardController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        // You can load summary data (counts of users, orders, products) here if needed.
-        
-        // Forward to the main Admin JSP dashboard view
+
         request.getRequestDispatcher("/views/admin/dashboard.jsp").forward(request, response);
     }
 }
