@@ -64,6 +64,30 @@ public class ProductDAOImpl implements ProductDAO {
     }
 
     @Override
+    public List<Product> findActiveRange(int offset, int limit) {
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            TypedQuery<Product> query = em.createQuery(
+                "SELECT p FROM Product p LEFT JOIN FETCH p.category WHERE p.status = true ORDER BY p.productId DESC", Product.class);
+            query.setFirstResult(offset);
+            query.setMaxResults(limit);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+    
+    @Override
+    public long countActive() {
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            return em.createQuery("SELECT COUNT(p) FROM Product p WHERE p.status = true", Long.class).getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+    
+    @Override
     public Product create(Product product) { 
         EntityManager em = JPAConfig.getEntityManager();
         EntityTransaction trans = em.getTransaction();
