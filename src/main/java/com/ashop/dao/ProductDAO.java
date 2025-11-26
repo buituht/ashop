@@ -11,4 +11,9 @@ public interface ProductDAO {
     Product create(Product product);
     Product update(Product product);
     void remove(Product product);
+
+    // Tìm các sản phẩm đang bật (status = true) theo phạm vi để dùng cho trang công khai
+    List<Product> findActiveRange(int offset, int limit);
+    // Đếm số sản phẩm đang bật
+    long countActive();
 }
