@@ -46,4 +46,15 @@ public class ProductServiceImpl implements ProductService {
         }
         return false;
     }
+
+    @Override
+    public List<Product> findActiveWithPagination(int page, int limit) {
+        int offset = (page - 1) * limit;
+        return productDAO.findActiveRange(offset, limit);
+    }
+
+    @Override
+    public long countActive() {
+        return productDAO.countActive();
+    }
 }
