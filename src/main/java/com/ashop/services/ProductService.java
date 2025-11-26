@@ -9,4 +9,8 @@ public interface ProductService {
     Product findById(int id);
     Product saveOrUpdate(Product product);
     boolean delete(int id);
+
+    // Dành cho trang công khai: chỉ lấy sản phẩm active
+    List<Product> findActiveWithPagination(int page, int limit);
+    long countActive();
 }
