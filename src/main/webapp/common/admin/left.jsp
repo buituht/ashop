@@ -8,7 +8,7 @@
 <div class="col-sm-3 sidenav d-none d-md-block">
   <h4>Trang Admin</h4>
   <ul class="nav  admin-nav" aria-label="Admin navigation">
-    <li><a   href="${pageContext.request.contextPath}/admin" data-title="Trang chính"><i class="fas fa-home icon me-2" aria-hidden="true"></i> Trang chính</a></li>
+    <li><a   href="${pageContext.request.contextPath}/admin/dashboard?view=stats" data-title="Trang chính"><i class="fas fa-home icon me-2" aria-hidden="true"></i> Thống kê</a></li>
     <li ><a   href="${pageContext.request.contextPath}/admin/categories" data-title="Danh mục"><i class="fas fa-list icon me-2" aria-hidden="true"></i> Danh mục</a></li>
     <li><a   href="${pageContext.request.contextPath}/admin/products" data-title="Sản phẩm"><i class="fas fa-box-open icon me-2" aria-hidden="true"></i> Sản phẩm</a></li>
     <li ><a  href="${pageContext.request.contextPath}/admin/orders" data-title="Đơn hàng"><i class="fas fa-receipt icon me-2" aria-hidden="true"></i> Đơn hàng</a></li>
