@@ -6,6 +6,7 @@ import com.ashop.dao.UserDAO; // Giả định
 import com.ashop.dao.impl.UserDAOImpl; // Giả định
 
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserServiceImpl implements UserService {
 
@@ -59,59 +60,67 @@ public class UserServiceImpl implements UserService {
         User user = userDAO.findByUsername(username); // Giả định DAO có findByUsername
         
         if (user != null) {
-            // 2. So sánh mật khẩu (Sử dụng HashingUtil)
-            // if (HashingUtil.checkPassword(rawPassword, user.getPassword())) {
-            
-            // Tạm thời so sánh chuỗi (CHỈ DÙNG TẠM THỜI cho môi trường TEST)
-            // THAY THẾ BẰNG LOGIC HASH SỚM NHẤT CÓ THỂ
-            if (rawPassword.equals(user.getPassword())) { 
-                
-                // 3. Đăng nhập thành công, ẩn mật khẩu trước khi trả về
-                user.setPassword(null); 
-                return user;
+            // 2. So sánh mật khẩu (Sử dụng BCrypt nếu mật khẩu trong DB đã được hash)
+            try {
+                String stored = user.getPassword();
+                if (stored != null && (stored.startsWith("$2a$") || stored.startsWith("$2b$") || stored.startsWith("$2y$"))) {
+                    // bcrypt hashed password
+                    if (BCrypt.checkpw(rawPassword, stored)) {
+                        user.setPassword(null);
+                        return user;
+                    }
+                } else {
+                    // fallback to plain-text comparison for legacy records
+                    if (rawPassword.equals(stored)) {
+                        user.setPassword(null);
+                        return user;
+                    }
+                }
+            } catch (Exception ex) {
+                // if any error occurs during check, treat as authentication failure
+                ex.printStackTrace();
             }
-        }
-        return null; // Đăng nhập thất bại
-    }
-    @Override
-    public boolean checkExistEmail(String email) {
-        // Delegate the check to the DAO layer
-        return userDAO.checkExistEmail(email); 
-    }
-    
-    @Override
-    public boolean register(String username, String password, String fullName, String email, String phone, String address, String role, Boolean status, String avatar) {
-        try {
-            // NOTE: HASHING MUST BE DONE HERE
-            // String hashedPassword = HashingUtil.hashPassword(password);
-            
+         }
+         return null; // Đăng nhập thất bại
+     }
+     @Override
+     public boolean checkExistEmail(String email) {
+         // Delegate the check to the DAO layer
+         return userDAO.checkExistEmail(email); 
+     }
+     
+     @Override
+     public boolean register(String username, String password, String fullName, String email, String phone, String address, String role, Boolean status, String avatar) {
+         try {
+             // NOTE: HASHING MUST BE DONE HERE
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
             // 1. Tạo Entity
             User newUser = new User(); 
             
             // 2. Set các giá trị (bao gồm mật khẩu đã hash)
             newUser.setUsername(username);
-            // newUser.setPassword(hashedPassword); 
-            newUser.setPassword(password); // Tạm thời dùng chuỗi thô nếu chưa có HashingUtil
-            newUser.setFullName(fullName);
-            newUser.setEmail(email);
-            newUser.setPhone(phone);
-            newUser.setAddress(address);
-            newUser.setRole(role);
-            newUser.setStatus(status);
-            // ... set avatar, created_at, etc. ...
+            newUser.setPassword(hashedPassword);
+             newUser.setFullName(fullName);
+             newUser.setEmail(email);
+             newUser.setPhone(phone);
+             newUser.setAddress(address);
+             newUser.setRole(role);
+             newUser.setStatus(status);
+             // ... set avatar, created_at, etc. ...
 
-            // 3. Gọi DAO để lưu
-            userDAO.create(newUser); 
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    
-    @Override
-    public boolean checkExistUsername(String username) {
-        // Logic sẽ gọi DAO để kiểm tra sự tồn tại
-        return userDAO.checkExistUsername(username); 
-    }
-}
+             // 3. Gọi DAO để lưu
+             userDAO.create(newUser); 
+             return true;
+         } catch (Exception e) {
+             e.printStackTrace();
+             return false;
+         }
+     }
+     
+     @Override
+     public boolean checkExistUsername(String username) {
+         // Logic sẽ gọi DAO để kiểm tra sự tồn tại
+         return userDAO.checkExistUsername(username); 
+     }
+ }
