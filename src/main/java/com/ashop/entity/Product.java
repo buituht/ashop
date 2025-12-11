@@ -47,6 +47,9 @@ public class Product implements Serializable {
     @Column(name = "status")
     private Boolean status = true; // True: Đang bán, False: Ẩn/Ngừng bán
 
+    @Column(name = "short_description", length = 255)
+    private String shortDescription;
+
     // --- Quan hệ Many-to-One với Category ---
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
@@ -177,6 +180,14 @@ public class Product implements Serializable {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public String getShortDescription() {
+        return shortDescription;
+    }
+
+    public void setShortDescription(String shortDescription) {
+        this.shortDescription = shortDescription;
     }
 /*
     public Set<Cart> getCarts() {
