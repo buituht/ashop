@@ -1,52 +1,47 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
-
-<%-- Include site header (navigation, user/login) --%>
-<jsp:include page="/common/web/header.jsp" />
-
 <main>
-    <section class="bg-light py-5">
+    <section class="bg-light py-5 hero-section animate__animated animate__fadeIn">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-lg-6">
-                    <h1 class="display-5 fw-bold">Chào mừng đến với AShop</h1>
+                    <h1 class="display-5 fw-bold text-gradient">Chào mừng đến với <span class="text-primary">AShop</span></h1>
                     <p class="lead text-muted">Sản phẩm chất lượng, giá cả cạnh tranh và trải nghiệm mua sắm thân thiện.</p>
                     <p class="mb-4">Khám phá bộ sưu tập mới nhất, khuyến mại hấp dẫn và dịch vụ chăm sóc khách hàng tận tâm.</p>
                     <div>
-                        <a href="${pageContext.request.contextPath}/products" class="btn btn-primary btn-lg me-2">Xem Sản phẩm</a>
-                        <a href="${pageContext.request.contextPath}/register" class="btn btn-outline-secondary btn-lg">Tạo tài khoản</a>
+                        <a href="${pageContext.request.contextPath}/products" class="btn btn-primary btn-lg me-2 animate__animated animate__pulse animate__infinite">Xem Sản phẩm <i class="fas fa-arrow-right"></i></a>
+                        <a href="${pageContext.request.contextPath}/register" class="btn btn-outline-secondary btn-lg">Tạo tài khoản <i class="fas fa-user-plus"></i></a>
                     </div>
                 </div>
                 <div class="col-lg-6 d-none d-lg-block">
-                    <div class="card border-0 shadow-sm">
-                        <img src="${pageContext.request.contextPath}/assets/hero-illustration.png" alt="Hero" class="img-fluid">
+                    <div class="card border-0 shadow-sm animate__animated animate__zoomIn">
+                        <img src="${pageContext.request.contextPath}/assets/hero-illustration.png" alt="Hero" class="img-fluid rounded-4">
                     </div>
                 </div>
             </div>
         </div>
     </section>
-
     <section class="py-5">
         <div class="container">
             <div class="row text-center g-4">
                 <div class="col-md-4">
-                    <div class="p-4">
+                    <div class="p-4 card shadow-sm h-100 hover-card">
                         <i class="fas fa-shipping-fast fa-2x mb-3 text-primary"></i>
                         <h5 class="fw-bold">Giao hàng nhanh</h5>
                         <p class="text-muted">Giao hàng toàn quốc, theo dõi đơn hàng dễ dàng.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="p-4">
-                        <i class="fas fa-award fa-2x mb-3 text-primary"></i>
+                    <div class="p-4 card shadow-sm h-100 hover-card">
+                        <i class="fas fa-award fa-2x mb-3 text-warning"></i>
                         <h5 class="fw-bold">Sản phẩm chính hãng</h5>
                         <p class="text-muted">Cam kết chất lượng, đổi trả trong 7 ngày.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="p-4">
-                        <i class="fas fa-headset fa-2x mb-3 text-primary"></i>
+                    <div class="p-4 card shadow-sm h-100 hover-card">
+                        <i class="fas fa-headset fa-2x mb-3 text-success"></i>
                         <h5 class="fw-bold">Hỗ trợ 24/7</h5>
                         <p class="text-muted">Đội ngũ chăm sóc khách hàng luôn sẵn sàng hỗ trợ.</p>
                     </div>
@@ -54,20 +49,18 @@
             </div>
         </div>
     </section>
-
     <section class="py-5 bg-white">
         <div class="container">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3 class="mb-0">Sản phẩm nổi bật</h3>
+                <h3 class="mb-0"><i class="fas fa-star text-warning"></i> Sản phẩm nổi bật</h3>
                 <a href="${pageContext.request.contextPath}/products" class="text-decoration-none">Xem tất cả &raquo;</a>
             </div>
-
             <div class="row g-4">
                 <c:choose>
                     <c:when test="${not empty products}">
                         <c:forEach var="p" items="${products}">
                             <div class="col-6 col-sm-4 col-md-3">
-                                <div class="card h-100 shadow-sm">
+                                <div class="card h-100 shadow-sm product-card animate__animated animate__fadeInUp">
                                     <c:if test="${p.image != null && p.image != ''}">
                                         <img src="${pageContext.request.contextPath}/${p.image}" class="card-img-top" alt="${p.productName}" style="height:180px;object-fit:cover;">
                                     </c:if>
@@ -75,7 +68,7 @@
                                         <h6 class="card-title mb-2">${p.productName}</h6>
                                         <div class="mt-auto d-flex justify-content-between align-items-center">
                                             <strong class="text-primary"><fmt:formatNumber value="${p.price}" type="number" maxFractionDigits="0" /> VNĐ</strong>
-                                            <a href="${pageContext.request.contextPath}/product?id=${p.productId}" class="btn btn-sm btn-outline-primary">Xem</a>
+                                            <a href="${pageContext.request.contextPath}/product?id=${p.productId}" class="btn btn-sm btn-outline-primary">Xem <i class="fas fa-eye"></i></a>
                                         </div>
                                     </div>
                                 </div>
@@ -89,16 +82,15 @@
             </div>
         </div>
     </section>
-
     <section class="py-5 bg-light">
         <div class="container">
-            <h3 class="mb-4">Khám phá theo danh mục</h3>
+            <h3 class="mb-4"><i class="fas fa-th-large text-primary"></i> Khám phá theo danh mục</h3>
             <div class="row g-3">
                 <c:if test="${not empty categories}">
                     <c:forEach var="c" items="${categories}">
                         <div class="col-6 col-md-3">
                             <a href="${pageContext.request.contextPath}/products?category=${c.categoryId}" class="text-decoration-none">
-                                <div class="card text-center shadow-sm p-3">
+                                <div class="card text-center shadow-sm p-3 hover-card">
                                     <i class="fas fa-box fa-2x text-muted mb-2"></i>
                                     <div class="fw-bold">${c.categoryName}</div>
                                 </div>
@@ -112,30 +104,44 @@
             </div>
         </div>
     </section>
-
     <section class="py-5">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h4 class="mb-1">Đăng ký nhận khuyến mãi</h4>
+                    <h4 class="mb-1"><i class="fas fa-envelope-open-text text-info"></i> Đăng ký nhận khuyến mãi</h4>
                     <p class="text-muted mb-0">Nhận thông tin chương trình và ưu đãi mới nhất qua email.</p>
                 </div>
                 <div class="col-md-4">
                     <form action="${pageContext.request.contextPath}/newsletter" method="post" class="d-flex">
                         <input type="email" name="email" class="form-control me-2" placeholder="Nhập email của bạn" required>
-                        <button class="btn btn-primary" type="submit">Đăng ký</button>
+                        <button class="btn btn-primary" type="submit">Đăng ký <i class="fas fa-paper-plane"></i></button>
                     </form>
                 </div>
             </div>
         </div>
     </section>
 </main>
-
-<jsp:include page="/common/footer.jsp" />
-
-<%-- Small inline styles to keep look neat if global CSS not present --%>
+<!-- Thêm hiệu ứng animate.css và custom style cho sinh động -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 <style>
-    .hero-section { padding: 3rem 0; }
-    .hero-section img { border-radius: .5rem; }
-    .card { border-radius: .5rem; }
+.text-gradient {
+    background: linear-gradient(90deg, #007bff, #00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-fill-color: transparent;
+}
+.hover-card:hover {
+    box-shadow: 0 0 20px #007bff33;
+    transform: translateY(-5px) scale(1.03);
+    transition: all 0.3s;
+}
+.product-card:hover {
+    box-shadow: 0 0 20px #ffc10755;
+    transform: scale(1.04);
+    transition: all 0.3s;
+}
+.hero-section {
+    background: linear-gradient(90deg, #f8fafc 60%, #e3f2fd 100%);
+}
 </style>
