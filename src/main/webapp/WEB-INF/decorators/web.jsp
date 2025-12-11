@@ -141,9 +141,90 @@ footer {
    <%@ include file="/common/footer.jsp"%>
    
     <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!-- Bootstrap 5 bundle (includes Popper) - required for data-bs-* attributes to work -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <!-- Ensure dropdowns are initialized and add a light debug log in console -->
+    <script>
+      (function(){
+        try {
+          if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+            var toggles = document.querySelectorAll('[data-bs-toggle="dropdown"]');
+            toggles.forEach(function(el){
+              // instantiate only if not already attached
+              try { new bootstrap.Dropdown(el); } catch(e) { /* ignore */ }
+            });
+            // optional debug
+            console.log('Bootstrap dropdown init: ' + toggles.length + ' toggles');
+          } else {
+            console.warn('Bootstrap not loaded or bootstrap.Dropdown missing');
+          }
+        } catch (err) {
+          console.error('Error initializing dropdowns', err);
+        }
+      })();
+    </script>
+    <script>
+      (function(){
+        try {
+          var userToggle = document.getElementById('userDropdown');
+          if (userToggle) {
+            userToggle.addEventListener('click', function(e){
+              // prevent default navigation and stop propagation and explicitly toggle
+              e.preventDefault();
+              e.stopPropagation();
+              try {
+                var menu = userToggle.parentElement.querySelector('.dropdown-menu');
+                if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+                  try {
+                    var inst = bootstrap.Dropdown.getOrCreateInstance(userToggle);
+                    inst.toggle();
+                  } catch (ex) {
+                    console.error('Error toggling user dropdown with Bootstrap API', ex);
+                  }
+                }
+                // Fallback: manually toggle .show and aria-expanded
+                if (menu) {
+                  var isShown = menu.classList.contains('show');
+                  if (isShown) {
+                    menu.classList.remove('show');
+                    userToggle.setAttribute('aria-expanded','false');
+                  } else {
+                    menu.classList.add('show');
+                    userToggle.setAttribute('aria-expanded','true');
+                  }
+                }
+              } catch (err) {
+                console.error('Error in user toggle click handler', err);
+              }
+            });
+            // close dropdown when clicking outside
+            document.addEventListener('click', function(ev){
+              try {
+                var menu = userToggle.parentElement.querySelector('.dropdown-menu');
+                if (menu && menu.classList.contains('show')) {
+                  var within = userToggle.contains(ev.target) || menu.contains(ev.target);
+                  if (!within) {
+                    // try to hide via bootstrap API first
+                    try {
+                      if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+                        var inst = bootstrap.Dropdown.getOrCreateInstance(userToggle);
+                        inst.hide();
+                      }
+                    } catch (e) {
+                      // ignore
+                    }
+                    // fallback remove class
+                    menu.classList.remove('show');
+                    userToggle.setAttribute('aria-expanded','false');
+                  }
+                }
+              } catch(err) { /* ignore */ }
+            });
+          }
+        } catch(err) {
+          console.error('Error setting user dropdown click handler', err);
+        }
+      })();
+    </script>
   </body>
 </html>
