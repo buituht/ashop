@@ -14,7 +14,22 @@
                     <c:if test="${not empty requestScope.error}">
                         <div class="alert alert-danger">${requestScope.error}</div>
                     </c:if>
-                    
+
+                    <%-- Hiển thị thông báo thành công/Email info lưu trong session (được set sau đăng ký) --%>
+                    <c:if test="${not empty sessionScope.successMessage}">
+                        <div class="alert alert-success">${sessionScope.successMessage}</div>
+                    </c:if>
+                    <c:if test="${not empty sessionScope.emailInfo}">
+                        <div class="alert alert-info">${sessionScope.emailInfo}</div>
+                    </c:if>
+                    <%-- Nếu dev không cấu hình SMTP, controller lưu verificationLink vào session --%>
+                    <c:if test="${not empty sessionScope.verificationLink}">
+                        <div class="alert alert-warning">
+                            Liên kết xác thực (chạy ở chế độ dev hoặc SMTP chưa cấu hình):
+                            <a href="${sessionScope.verificationLink}" target="_blank">${sessionScope.verificationLink}</a>
+                        </div>
+                    </c:if>
++
                     <%-- Form Đăng Nhập --%>
                     <form action="<c:url value="/login"/>" method="post">
                         
