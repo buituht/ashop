@@ -75,13 +75,47 @@ public class RegisterController extends HttpServlet {
                 return;
             }
             
-            // 3. Thực hiện Đăng ký qua Service
-            // UserService.register() sẽ đảm nhiệm việc hash mật khẩu và lưu vào DB
-            boolean isSuccess = userService.register(username, password, fullName, email, phone, address, role, status, avatar);
+            // 3. Thực hiện Đăng ký qua Service (với email xác thực)
+            String appUrl = req.getScheme() + "://" + req.getServerName() + (req.getServerPort() == 80 || req.getServerPort() == 443 ? "" : ":" + req.getServerPort()) + req.getContextPath();
+            boolean isSuccess = false;
+            try {
+                isSuccess = userService.registerWithEmailVerification(username, password, fullName, email, phone, address, role, status, avatar, appUrl);
+            } catch (Exception e) {
+                e.printStackTrace();
+                // If sending fails we still want to show a helpful message and the verification link if possible
+                // Try to fetch the created user and provide the link to the UI
+                User created = userService.findByUsername(username);
+                if (created != null && created.getVerificationToken() != null) {
+                    String verifyLink = appUrl + "/verify?token=" + created.getVerificationToken();
+                    session.setAttribute("verificationLink", verifyLink);
+                }
+                req.setAttribute("alert", "Không thể gửi email xác thực. Vui lòng kiểm tra cấu hình SMTP hoặc sử dụng liên kết kích hoạt hiển thị bên dưới.");
+                req.getRequestDispatcher(forwardUrl).forward(req, resp);
+                return;
+            }
             
             if (isSuccess) {
-                // *** THÀNH CÔNG: LƯU THÔNG BÁO VÀO SESSION VÀ CHUYỂN HƯỚNG (PRG) ***
-                session.setAttribute("successMessage", "Đăng ký thành công! Vui lòng đăng nhập.");
+                // Determine SMTP config presence to customize message
+                String smtpHost = System.getProperty("mail.smtp.host", System.getenv().getOrDefault("MAIL_SMTP_HOST", ""));
+                String emailInfo;
+                if (smtpHost == null || smtpHost.isEmpty()) {
+                    // env not set; dev fallback likely printed link to console. Provide the link in UI by reading saved user.
+                    User created = userService.findByUsername(username);
+                    String verifyLink = null;
+                    if (created != null && created.getVerificationToken() != null) {
+                        verifyLink = appUrl + "/verify?token=" + created.getVerificationToken();
+                        session.setAttribute("verificationLink", verifyLink);
+                    }
+                    emailInfo = "Đăng ký thành công! (Chạy ở môi trường dev): liên kết kích hoạt được hiển thị bên dưới.";
+                } else {
+                    emailInfo = "Đăng ký thành công! Email xác thực đã được gửi đến " + email + ". Vui lòng kiểm tra hộp thư (và spam).";
+                }
+
+                // Store success message and email info in session so login page can display them
+                session.setAttribute("successMessage", "Đăng ký thành công!");
+                session.setAttribute("emailInfo", emailInfo);
+
+                // Redirect to login (PRG)
                 resp.sendRedirect(req.getContextPath() + "/login");
                 return;
             } else {
