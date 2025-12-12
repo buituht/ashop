@@ -42,6 +42,13 @@ public class User implements Serializable {
 
     @Column(name = "status")
     private Boolean status = true;
+
+    // --- Email verification fields ---
+    @Column(name = "verification_token", length = 100)
+    private String verificationToken;
+
+    @Column(name = "email_verified")
+    private Boolean emailVerified = false;
     
     /*
     // Quan hệ One-to-Many với Order
@@ -161,6 +168,23 @@ public class User implements Serializable {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    // --- Email verification getter/setter ---
+    public String getVerificationToken() {
+        return verificationToken;
+    }
+
+    public void setVerificationToken(String verificationToken) {
+        this.verificationToken = verificationToken;
+    }
+
+    public Boolean getEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
     }
 /*
     public Set<Order> getOrders() {
