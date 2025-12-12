@@ -29,4 +29,15 @@ public class EmailUtil {
 
         Transport.send(msg);
     }
+
+    // Overloaded convenience method: uses system properties or environment variables for SMTP config
+    public static void sendEmail(String toAddress, String subject, String message) throws MessagingException {
+        // Use system properties first, then environment variables. Use safe defaults so dev fallback in service works.
+        String host = System.getProperty("mail.smtp.host", System.getenv().getOrDefault("MAIL_SMTP_HOST", "smtp.gmail.com"));
+        String port = System.getProperty("mail.smtp.port", System.getenv().getOrDefault("MAIL_SMTP_PORT", "587"));
+        String username = System.getProperty("mail.smtp.user", System.getenv().getOrDefault("MAIL_SMTP_USER", "pummenvietnam@gmail.com"));
+        String password = System.getProperty("mail.smtp.pass", System.getenv().getOrDefault("MAIL_SMTP_PASS", "ywye trqk teer rwvk"));
+
+        sendEmail(host, port, username, password, toAddress, subject, message);
+    }
 }
