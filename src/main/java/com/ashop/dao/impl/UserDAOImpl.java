@@ -183,5 +183,45 @@ public class UserDAOImpl implements UserDAO {
             em.close();
         }
     }
+
+    @Override
+    public User findByVerificationToken(String token) {
+        EntityManager em = JPAConfig.getEntityManager();
+        String jpql = "SELECT u FROM User u WHERE u.verificationToken = :token";
+        try {
+            TypedQuery<User> query = em.createQuery(jpql, User.class);
+            query.setParameter("token", token);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public boolean verifyUserEmail(User user) {
+        EntityManager em = JPAConfig.getEntityManager();
+        EntityTransaction trans = em.getTransaction();
+        try {
+            trans.begin();
+            User managed = em.merge(user);
+            managed.setEmailVerified(true);
+            managed.setVerificationToken(null);
+            trans.commit();
+            return true;
+        } catch (Exception e) {
+            if (trans.isActive()) {
+                trans.rollback();
+            }
+            e.printStackTrace();
+            return false;
+        } finally {
+            em.close();
+        }
+    }
     
 }
