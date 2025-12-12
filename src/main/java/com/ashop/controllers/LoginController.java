@@ -46,16 +46,25 @@ public class LoginController extends HttpServlet {
         String forwardUrl = "/views/login.jsp";
 
         try {
-            // 2. Xác thực người dùng qua Service
+            // 2. Gọi service để lấy user (nếu không tồn tại sẽ trả về null)
+            User existing = userService.findByUsername(username);
+            if (existing != null && Boolean.FALSE.equals(existing.getEmailVerified())) {
+                errorMsg = "Tài khoản chưa được xác thực email. Vui lòng kiểm tra email và bấm vào liên kết xác thực.";
+                req.setAttribute("error", errorMsg);
+                req.getRequestDispatcher(forwardUrl).forward(req, resp);
+                return;
+            }
+
+            // 3. Xác thực người dùng qua Service
             User user = userService.login(username, password);
 
             if (user != null) {
-                // 3. Xử lý ĐĂNG NHẬP THÀNH CÔNG
+                // 4. Xử lý ĐĂNG NHẬP THÀNH CÔNG
                 HttpSession session = req.getSession(true);
                 session.setAttribute("currentUser", user); // Lưu đối tượng User vào session
                 session.setAttribute("role", user.getRole()); // Lưu vai trò (ADMIN/USER)
 
-                // 4. Xử lý "Nhớ mật khẩu" (Cookie)
+                // 5. Xử lý "Nhớ mật khẩu" (Cookie)
                 if ("on".equals(rememberMe)) {
                     Cookie userCookie = new Cookie("username", username);
                     userCookie.setMaxAge(60 * 60 * 24 * 7); // Cookie tồn tại 7 ngày
@@ -78,7 +87,7 @@ public class LoginController extends HttpServlet {
                 return;
                 
             } else {
-                // 5. Xử lý ĐĂNG NHẬP THẤT BẠI
+                // 6. Xử lý ĐĂNG NHẬP THẤT BẠI
                 errorMsg = "Tên đăng nhập hoặc mật khẩu không chính xác.";
             }
 
