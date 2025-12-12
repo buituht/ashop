@@ -44,4 +44,7 @@ public interface UserService {
     boolean checkExistEmail(String email);
     boolean checkExistUsername(String username);
     boolean register(String username, String password, String fullName, String email, String phone, String address, String role, Boolean status, String avatar);
+    boolean registerWithEmailVerification(String username, String password, String fullName, String email, String phone, String address, String role, Boolean status, String avatar, String appUrl) throws Exception;
+    boolean verifyToken(String token);
+    User findByUsername(String username);
 }
