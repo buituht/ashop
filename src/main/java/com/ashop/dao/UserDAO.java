@@ -14,4 +14,7 @@ public interface UserDAO {
     User findByUsername(String username);
     boolean checkExistEmail(String email);
     boolean checkExistUsername(String username);
+    User findByVerificationToken(String token);
+    boolean verifyUserEmail(User user);
+    User findByEmail(String email); // Find user by email
 }
