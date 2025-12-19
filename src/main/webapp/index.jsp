@@ -25,7 +25,7 @@
     if (request.getAttribute("categories") == null) {
         try {
             com.ashop.services.impl.CategoryServiceImpl cs = new com.ashop.services.impl.CategoryServiceImpl();
-            java.util.List<com.ashop.entity.Category> cats = cs.findAll();
+            java.util.List<com.ashop.entity.Category> cats = cs.findActive();
             request.setAttribute("categories", cats);
         } catch (Exception e) {
             request.setAttribute("categories", java.util.Collections.emptyList());
