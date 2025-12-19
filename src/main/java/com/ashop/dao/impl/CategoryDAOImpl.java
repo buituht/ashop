@@ -47,6 +47,17 @@ public class CategoryDAOImpl implements CategoryDAO {
     }
 
     @Override
+    public List<Category> findActive() {
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            TypedQuery<Category> query = em.createQuery("SELECT c FROM Category c WHERE c.status = true ORDER BY c.categoryId DESC", Category.class);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
     public long countAll() { 
         EntityManager em = JPAConfig.getEntityManager();
         try {
