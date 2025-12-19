@@ -11,4 +11,5 @@ public interface CategoryDAO {
     Category create(Category category);
     Category update(Category category);
     void remove(Category category);
+    List<Category> findActive();
 }
