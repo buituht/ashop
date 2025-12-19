@@ -143,4 +143,30 @@ public class ProductDAOImpl implements ProductDAO {
             em.close();
         }
     }
+
+    // --- New: discounted active products ---
+    @Override
+    public List<Product> findDiscountedActiveRange(int offset, int limit) {
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            // salePrice > 0 và status = true
+            TypedQuery<Product> query = em.createQuery(
+                "SELECT p FROM Product p LEFT JOIN FETCH p.category WHERE p.status = true AND p.salePrice > 0 ORDER BY p.productId DESC", Product.class);
+            query.setFirstResult(offset);
+            query.setMaxResults(limit);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public long countDiscountedActive() {
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            return em.createQuery("SELECT COUNT(p) FROM Product p WHERE p.status = true AND p.salePrice > 0", Long.class).getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
 }
