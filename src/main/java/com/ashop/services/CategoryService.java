@@ -10,4 +10,7 @@ public interface CategoryService {
     Category saveOrUpdate(Category category);
     boolean delete(int id);
     List<Category> findAll(); // Dùng cho danh sách đổ vào các form khác
+
+    // Lấy danh sách danh mục chỉ active (dùng cho trang chủ)
+    List<Category> findActive();
 }
