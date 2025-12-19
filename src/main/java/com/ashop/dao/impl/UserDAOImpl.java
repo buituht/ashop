@@ -223,5 +223,11 @@ public class UserDAOImpl implements UserDAO {
             em.close();
         }
     }
+
+	@Override
+	public User findByEmail(String email) {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }
