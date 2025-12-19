@@ -1,6 +1,39 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+
+<%-- Nếu request chưa chứa 'products' (sản phẩm nổi bật) hoặc 'categories', nạp chúng bằng service --%>
+<%
+    if (request.getAttribute("products") == null) {
+        try {
+            com.ashop.services.impl.ProductServiceImpl ps = new com.ashop.services.impl.ProductServiceImpl();
+            java.util.List<com.ashop.entity.Product> featured = null;
+            long countDiscounted = ps.countDiscountedActive();
+            if (countDiscounted > 0) {
+                featured = ps.findDiscountedActiveWithPagination(1, 8); // lấy tối đa 8 sản phẩm nổi bật
+            } else {
+                featured = ps.findActiveWithPagination(1, 8); // fallback: lấy sản phẩm mới nhất
+            }
+            request.setAttribute("products", featured);
+        } catch (Exception e) {
+            // Nếu có lỗi, đặt attribute rỗng để JSP xử lý phần hiển thị
+            request.setAttribute("products", java.util.Collections.emptyList());
+            e.printStackTrace();
+        }
+    }
+
+    if (request.getAttribute("categories") == null) {
+        try {
+            com.ashop.services.impl.CategoryServiceImpl cs = new com.ashop.services.impl.CategoryServiceImpl();
+            java.util.List<com.ashop.entity.Category> cats = cs.findAll();
+            request.setAttribute("categories", cats);
+        } catch (Exception e) {
+            request.setAttribute("categories", java.util.Collections.emptyList());
+            e.printStackTrace();
+        }
+    }
+%>
+
 <main>
     <section class="bg-light py-5 hero-section animate__animated animate__fadeIn">
         <div class="container">
@@ -16,7 +49,7 @@
                 </div>
                 <div class="col-lg-6 d-none d-lg-block">
                     <div class="card border-0 shadow-sm animate__animated animate__zoomIn">
-                        <img src="${pageContext.request.contextPath}/assets/hero-illustration.png" alt="Hero" class="img-fluid rounded-4">
+                        <img src="${pageContext.request.contextPath}/photos/hero-illustration.png" alt="Hero" class="img-fluid rounded-4">
                     </div>
                 </div>
             </div>
@@ -67,8 +100,22 @@
                                     <div class="card-body d-flex flex-column">
                                         <h6 class="card-title mb-2">${p.productName}</h6>
                                         <div class="mt-auto d-flex justify-content-between align-items-center">
-                                            <strong class="text-primary"><fmt:formatNumber value="${p.price}" type="number" maxFractionDigits="0" /> VNĐ</strong>
-                                            <a href="${pageContext.request.contextPath}/product?id=${p.productId}" class="btn btn-sm btn-outline-primary">Xem <i class="fas fa-eye"></i></a>
+                                            <div>
+                                                <c:choose>
+                                                    <c:when test="${p.salePrice != null && p.salePrice < p.price}">
+                                                        <div class="mb-1">
+                                                            <span class="text-muted text-decoration-line-through me-2"><fmt:formatNumber value="${p.price}" type="number" maxFractionDigits="0" /> VNĐ</span>
+                                                            <span class="text-danger fw-bold"><fmt:formatNumber value="${p.salePrice}" type="number" maxFractionDigits="0" /> VNĐ</span>
+                                                        </div>
+                                                        <c:set var="discountPercent" value="${((p.price - p.salePrice) * 100) / p.price}" />
+                                                        <small class="text-success">Giảm <fmt:formatNumber value="${discountPercent}" type="number" maxFractionDigits="0" />%</small>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <strong class="text-primary"><fmt:formatNumber value="${p.price}" type="number" maxFractionDigits="0" /> VNĐ</strong>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </div>
+                                             <a href="${pageContext.request.contextPath}/product?id=${p.productId}" class="btn btn-sm btn-outline-primary">Xem <i class="fas fa-eye"></i></a>
                                         </div>
                                     </div>
                                 </div>
