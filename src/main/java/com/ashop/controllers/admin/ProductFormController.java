@@ -7,7 +7,9 @@ import com.ashop.services.ProductService;
 import com.ashop.services.impl.CategoryServiceImpl; 
 import com.ashop.services.impl.ProductServiceImpl;
  
-import com.ashop.utils.SlugUtil;
+import java.text.Normalizer;
+import java.util.Locale;
+import java.util.regex.Pattern;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
@@ -100,7 +102,7 @@ public class ProductFormController extends HttpServlet {
             boolean status = "on".equalsIgnoreCase(request.getParameter("status"));
             
             // 2. Xử lý Slug
-            String slug = SlugUtil.toSlug(productName); 
+            String slug = toSlug(productName); 
             
             // 3. Xử lý Upload File (Giữ nguyên logic upload)
             Part filePart = request.getPart("imageFile"); 
@@ -237,4 +239,22 @@ public class ProductFormController extends HttpServlet {
             return 0; 
         }
     }
-}
+
+    // --- Local slug utility (fallback if external SlugUtil is not available) ---
+    private static final Pattern NON_LATIN = Pattern.compile("[^\\w-]");
+    private static final Pattern WHITESPACE = Pattern.compile("[\\s]");
+
+    private static String toSlug(String text) {
+        if (text == null || text.trim().isEmpty()) {
+            return "";
+        }
+        String slug = text.toLowerCase(Locale.ROOT);
+        slug = Normalizer.normalize(slug, Normalizer.Form.NFD);
+        slug = NON_LATIN.matcher(slug).replaceAll("");
+        slug = WHITESPACE.matcher(slug).replaceAll("-");
+        slug = slug.replaceAll("[-]+", "-");
+        slug = slug.replaceAll("^-|-$", "");
+        return slug;
+    }
+
+ }
