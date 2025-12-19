@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet({"/products", "/product"})
+@WebServlet({"/products", "/product", "/promotions"})
 public class ProductController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -68,6 +68,27 @@ public class ProductController extends HttpServlet {
 
                 request.setAttribute("product", product);
                 request.getRequestDispatcher("/views/product-detail.jsp").forward(request, response);
+
+            } else if (servletPath.equals("/promotions")) {
+                int currentPage = 1;
+                String pageParam = request.getParameter("page");
+                if (pageParam != null) {
+                    try {
+                        currentPage = Integer.parseInt(pageParam);
+                    } catch (NumberFormatException e) {
+                        currentPage = 1;
+                    }
+                }
+
+                long total = productService.countDiscountedActive();
+                int totalPages = (int) Math.ceil((double) total / ITEMS_PER_PAGE);
+
+                List<Product> products = productService.findDiscountedActiveWithPagination(currentPage, ITEMS_PER_PAGE);
+
+                request.setAttribute("products", products);
+                request.setAttribute("currentPage", currentPage);
+                request.setAttribute("totalPages", totalPages);
+                request.getRequestDispatcher("/views/product-promotions.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
