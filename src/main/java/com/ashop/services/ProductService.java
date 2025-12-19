@@ -13,4 +13,8 @@ public interface ProductService {
     // Dành cho trang công khai: chỉ lấy sản phẩm active
     List<Product> findActiveWithPagination(int page, int limit);
     long countActive();
+
+    // Dành cho trang khuyến mãi: lấy sản phẩm có salePrice > 0 và đang active
+    List<Product> findDiscountedActiveWithPagination(int page, int limit);
+    long countDiscountedActive();
 }
