@@ -1,110 +1,35 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-header {
-    position: relative; /* Cần thiết cho z-index hoạt động */
-    z-index: 1000;      /* Đặt một giá trị cao */
-}
-
-.navbar { position: relative; }
-
-.navbar .dropdown-menu {
-    /* Tăng giá trị z-index lên mức rất cao, ví dụ 9999, và sử dụng !important 
-       để đảm bảo nó ghi đè mọi quy tắc khác. */
-    z-index: 9999 !important; 
-    /* Đảm bảo menu có vị trí tuyệt đối hoặc cố định */
-    position: absolute !important; 
-    background: #ffffff !important; /* ensure menu is white so text is readable */
-}
-
-/* Force visible when `.show` is present (fallback) */
-.navbar .dropdown-menu.show {
+/* Replace the broad rule with a targeted hover for the user dropdown only.
+   Hover behavior enabled only on desktop (min-width:992px). Mobile/touch still uses click. */
+@media (min-width: 992px) {
+  /* When hovering or keyboard-focusing the user dropdown, show its menu */
+  .user-dropdown:hover > .dropdown-menu,
+  .user-dropdown:focus-within > .dropdown-menu,
+  .user-dropdown .user-name:hover + .dropdown-menu,
+  .user-dropdown .btn:hover + .dropdown-menu {
     display: block !important;
-}
-
-/* Center main navbar links on desktop without using .container */
-@media (min-width: 992px) {
-  /* Make the collapsed region a centered flex container */
-  .navbar .collapse.navbar-collapse {
-    display: flex !important;
-    justify-content: center;
-    align-items: center;
-  }
-
-  /* Position brand on the left */
-  .navbar .navbar-brand {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  /* Position right-side actions (cart, user) to the right */
-  .navbar .navbar-nav.ms-auto {
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-
-  /* Ensure the toggler is hidden on desktop (Bootstrap normally hides it) */
-  .navbar .navbar-toggler {
-    display: none;
-  }
-
-  /* Centered nav list styling */
-  .navbar .nav-center {
-    display: flex;
-    gap: 1rem;
+    margin-top: 0.15rem; /* small offset so menu sits under the button */
   }
 }
 
-/* --- Hover-to-open dropdown on desktop ---
-   Only enable hover behavior for larger screens (desktop) so mobile/touch
-   devices continue to use Bootstrap's click/tap behavior. */
-@media (min-width: 992px) {
-  .navbar .dropdown:hover > .dropdown-menu {
-    display: block;
-    transform: none;
-    opacity: 1;
-    visibility: visible;
-    margin-top: 0.25rem; /* small spacing under the nav link */
-  }
-  /* Keep the toggle visible as active when hovering */
-  .navbar .dropdown:hover > .nav-link.user-name,
-  .navbar .dropdown.show > .nav-link.user-name {
-    /* Force a visible, dark color for username and caret on hover/open */
-    color: #212529 !important;
-    background: transparent !important;
-  }
+/* Keep user button appearance tidy */
+.user-name {
+  border: none;
+  background: none;
+  padding: 0;
 }
+.user-name:focus { box-shadow: none; outline: none; }
 
-/* Small styling tweak so the username looks clickable */
-.navbar .nav-link.user-name {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    color: #212529; /* default dark color */
-}
-
-/* Ensure icons inside the username inherit the same color and remain visible */
-.navbar .nav-link.user-name i {
-    color: inherit !important;
-}
-
-/* Also ensure hover state for all screen sizes doesn't make text white */
-.navbar .nav-link.user-name:hover,
-.navbar .dropdown.show > .nav-link.user-name,
-.navbar .nav-link.user-name:focus {
-    color: #212529 !important;
-    background: transparent !important;
-}
-
+/* Recent items styling inside the dropdown (unchanged) */
+.recent-item { display:flex; align-items:center; gap:0.5rem; }
+.recent-item img { width:48px; height:48px; object-fit:cover; border-radius:4px; }
 </style>
+
 <c:set var="user" value="${sessionScope.currentUser}" />
 
 <header>
@@ -136,17 +61,57 @@ header {
             <i class="fas fa-shopping-cart"></i> Giỏ hàng
           </a>
         </li>
+        <!-- Recently viewed dropdown (shows when user has session items) -->
+        <c:if test="${not empty sessionScope.recentlyViewedIds}">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="recentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-clock"></i> Đã xem
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end p-2" aria-labelledby="recentDropdown" style="min-width:260px;">
+              <c:forEach var="pid" items="${sessionScope.recentlyViewedIds}">
+                <c:set var="p" value="${pageContext.request.contextPath}" />
+                <!-- We'll render each item by looking up product in request scope (if provided) or link by id -->
+                <li>
+                  <a class="dropdown-item recent-item" href="${pageContext.request.contextPath}/product?id=${pid}">
+                    <c:choose>
+                      <c:when test="${not empty requestScope.recentlyViewed}">
+                        <c:forEach var="rp" items="${requestScope.recentlyViewed}">
+                          <c:if test="${rp.productId == pid}">
+                            <c:choose>
+                              <c:when test="${not empty rp.image}">
+                                <img src="${pageContext.request.contextPath}/${rp.image}" alt="${fn:escapeXml(rp.productName)}" />
+                              </c:when>
+                              <c:otherwise>
+                                <img src="${pageContext.request.contextPath}/assets/img/no-image.png" alt="${fn:escapeXml(rp.productName)}" />
+                              </c:otherwise>
+                            </c:choose>
+                            <div class="meta">
+                              <div class="fw-bold">${fn:escapeXml(rp.productName)}</div>
+                              <div class="text-muted"><fmt:formatNumber value="${rp.price}" type="number" maxFractionDigits="0" /> VNĐ</div>
+                            </div>
+                          </c:if>
+                        </c:forEach>
+                      </c:when>
+                      <c:otherwise>
+                        <img src="${pageContext.request.contextPath}/assets/img/no-image.png" alt="${fn:escapeXml('Sản phẩm')}" />
+                        <div class="meta"><div class="fw-bold">Sản phẩm</div></div>
+                      </c:otherwise>
+                    </c:choose>
+                  </a>
+                </li>
+              </c:forEach>
+              <li><hr class="dropdown-divider" /></li>
+              <li><a class="dropdown-item text-center" href="${pageContext.request.contextPath}/products">Xem tất cả sản phẩm</a></li>
+            </ul>
+          </li>
+        </c:if>
         <c:choose>
           <c:when test="${user != null}">
-            <!-- Combine username and dropdown into a single hoverable element on desktop -->
-            <li class="nav-item dropdown">
+            <!-- User dropdown: add user-dropdown class so hover only affects this menu -->
+            <li class="nav-item dropdown user-dropdown">
               <!-- Use a button for dropdown toggle to avoid HTML navigation issues -->
               <button class="nav-link dropdown-toggle user-name btn btn-link" id="userDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" style="text-decoration:none;">
                 <i class="fas fa-user-circle"> </i>${user.fullName}
-                
-               <!-- <i class="fas fa-caret-down" style="font-size:0.85em; margin-left:4px;"> --> 
-                
-              
               </button>
                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                  <li><a class="dropdown-item" href="${pageContext.request.contextPath}/account"><i class="fas fa-user"></i> Tài khoản của tôi</a></li>
