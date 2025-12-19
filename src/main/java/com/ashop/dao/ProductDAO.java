@@ -16,4 +16,9 @@ public interface ProductDAO {
     List<Product> findActiveRange(int offset, int limit);
     // Đếm số sản phẩm đang bật
     long countActive();
+
+    // Tìm các sản phẩm đang có giá giảm (salePrice > 0) và đang bật, theo phạm vi
+    List<Product> findDiscountedActiveRange(int offset, int limit);
+    // Đếm số sản phẩm đang giảm giá và đang bật
+    long countDiscountedActive();
 }
