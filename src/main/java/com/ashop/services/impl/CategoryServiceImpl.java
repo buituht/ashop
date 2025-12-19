@@ -22,6 +22,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<Category> findActive() {
+        return categoryDAO.findActive();
+    }
+    
+    @Override
     public long countAll() {
         return categoryDAO.countAll();
     }
