@@ -24,7 +24,7 @@ body {
 .container {
     width: 80%;
     margin: auto;
-    overflow: hidden;
+    
 }
 
 /* Kiểu cho phần header (đầu trang) */
@@ -94,7 +94,7 @@ main {
     display: inline-block;
     padding: 10px 20px;
     background: #007bff;
-    color: #fff;
+  
     text-decoration: none;
     border-radius: 5px;
     font-weight: bold;
@@ -138,7 +138,7 @@ footer {
    		</div>
    </div>
    
-   <%@ include file="/common/footer.jsp"%>
+   <%@ include file="/common/web/footer.jsp"%>
    
     <!-- Optional JavaScript -->
     <!-- Bootstrap 5 bundle (includes Popper) - required for data-bs-* attributes to work -->
@@ -226,5 +226,20 @@ footer {
         }
       })();
     </script>
+    
+    
+    <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69438496131715197aa742f7/1jcnrrrnm';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
   </body>
 </html>
