@@ -33,7 +33,8 @@ public class ProductFormController extends HttpServlet {
     private final ProductService productService = new ProductServiceImpl();
     private final CategoryService categoryService = new CategoryServiceImpl();
     
-    private static final String UPLOAD_DIR = "/images/products/"; 
+    // ✅ Updated: Upload directory for product images
+    private static final String UPLOAD_DIR = "/photos/products/"; 
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -105,10 +106,16 @@ public class ProductFormController extends HttpServlet {
             // 2. Xử lý Slug
             String slug = toSlug(productName); 
             
-            // 3. Xử lý Upload File (Giữ nguyên logic upload)
+            // 3. Xử lý Upload File
             Part filePart = request.getPart("imageFile"); 
             if (filePart != null && filePart.getSize() > 0) {
-                String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                // Get original file name
+                String originalFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                // Extract file extension
+                String fileExtension = originalFileName.substring(originalFileName.lastIndexOf("."));
+                // Create new filename using slug
+                String fileName = slug + fileExtension;
+                
                 String fullUploadPath = request.getServletContext().getRealPath(UPLOAD_DIR);
                 
                 Path uploadPath = Paths.get(fullUploadPath);
@@ -119,6 +126,7 @@ public class ProductFormController extends HttpServlet {
                 Path filePath = Paths.get(fullUploadPath, fileName);
                 filePart.write(filePath.toString());
                 imagePath = UPLOAD_DIR + fileName;
+                System.out.println("✅ File uploaded: " + filePath.toString());
             } else {
                 imagePath = oldImage;
             }
