@@ -21,4 +21,15 @@ public interface ProductDAO {
     List<Product> findDiscountedActiveRange(int offset, int limit);
     // Đếm số sản phẩm đang giảm giá và đang bật
     long countDiscountedActive();
+
+    // Tìm sản phẩm theo danh mục (category) và trạng thái active
+    List<Product> findByCategory(int categoryId, int offset, int limit);
+    // Đếm số sản phẩm theo danh mục
+    long countByCategory(int categoryId);
+
+    // Tìm sản phẩm active với sắp xếp
+    List<Product> findActiveSorted(int offset, int limit, String sortBy);
+    
+    // Tìm sản phẩm theo danh mục với sắp xếp
+    List<Product> findByCategorySorted(int categoryId, int offset, int limit, String sortBy);
 }
