@@ -151,22 +151,7 @@
             </div>
         </div>
     </section>
-    <section class="py-5">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h4 class="mb-1"><i class="fas fa-envelope-open-text text-info"></i> Đăng ký nhận khuyến mãi</h4>
-                    <p class="text-muted mb-0">Nhận thông tin chương trình và ưu đãi mới nhất qua email.</p>
-                </div>
-                <div class="col-md-4">
-                    <form action="${pageContext.request.contextPath}/newsletter" method="post" class="d-flex">
-                        <input type="email" name="email" class="form-control me-2" placeholder="Nhập email của bạn" required>
-                        <button class="btn btn-primary" type="submit">Đăng ký <i class="fas fa-paper-plane"></i></button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
+
 </main>
 <!-- Thêm hiệu ứng animate.css và custom style cho sinh động -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
