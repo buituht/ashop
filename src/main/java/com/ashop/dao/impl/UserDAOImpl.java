@@ -226,8 +226,33 @@ public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public User findByEmail(String email) {
-		// TODO Auto-generated method stub
-		return null;
+		EntityManager em = JPAConfig.getEntityManager();
+		String jpql = "SELECT u FROM User u WHERE u.email = :email";
+		try {
+			TypedQuery<User> query = em.createQuery(jpql, User.class);
+			query.setParameter("email", email);
+			return query.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			em.close();
+		}
 	}
+
+    @Override
+    public long countOrdersByUser(int userId) {
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            Long cnt = em.createQuery("SELECT COUNT(o) FROM Order o WHERE o.user.userId = :uid", Long.class)
+                         .setParameter("uid", userId)
+                         .getSingleResult();
+            return cnt != null ? cnt : 0L;
+        } finally {
+            em.close();
+        }
+    }
     
 }
