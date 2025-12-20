@@ -36,10 +36,17 @@ public class ContactServiceImpl implements ContactService {
         }
         return created;
     }
+
     @Override
     public Contact findById(int id) { return contactDAO.findById(id); }
     @Override
     public List<Contact> findAll() { return contactDAO.findAll(); }
     @Override
     public void delete(Contact contact) { contactDAO.remove(contact); }
+
+    @Override
+    public long count() { return contactDAO.count(); }
+
+    @Override
+    public List<Contact> findWithPagination(int page, int size) { return contactDAO.findWithPagination(page, size); }
 }
