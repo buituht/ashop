@@ -8,4 +8,8 @@ public interface ContactDAO {
     Contact findById(int id);
     List<Contact> findAll();
     void remove(Contact contact);
+
+    // Thêm hỗ trợ phân trang
+    long count();
+    List<Contact> findWithPagination(int page, int size);
 }
