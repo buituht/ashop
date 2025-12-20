@@ -3,6 +3,8 @@ package com.ashop.entity;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 @Entity
 @Table(name = "contacts")
@@ -40,4 +42,11 @@ public class Contact implements Serializable {
     public void setMessage(String message) { this.message = message; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    // Convenience formatted date string for JSP (avoids fmt:formatDate issues with LocalDateTime)
+    public String getCreatedAtStr() {
+        if (Objects.isNull(this.createdAt)) return "";
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        return this.createdAt.format(fmt);
+    }
 }
