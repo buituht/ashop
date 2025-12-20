@@ -8,4 +8,8 @@ public interface ContactService {
     Contact findById(int id);
     List<Contact> findAll();
     void delete(Contact contact);
+
+    // pagination support
+    long count();
+    List<Contact> findWithPagination(int page, int size);
 }
