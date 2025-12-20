@@ -76,29 +76,34 @@
       </div>
 
       <!-- Newsletter & Social -->
-      <div class="col-12 col-md-4">
-        <h6 class="text-white">Đăng ký nhận tin</h6>
-        <p class="small text-muted">Nhận mã giảm giá và tin tức sản phẩm mới nhất trực tiếp vào email của bạn.</p>
-
-        <form id="newsletterForm" class="d-flex mb-2" onsubmit="return handleNewsletterSubmit(event);" novalidate>
-          <input type="email" id="newsletterEmail" name="newsletterEmail" class="form-control me-2" placeholder="Email của bạn" aria-label="Email" required>
-          <button class="btn btn-primary" type="submit">Đăng ký</button>
-        </form>
+      <div class="col-4 col-md-2" style="
+    padding-left: 20px;
+">
+        <h6 class="text-white">Kết nối với chúng tôi</h6>
+      
         <div id="newsletterFeedback" class="alert alert-success d-none p-2" role="status" aria-live="polite"></div>
 
-        <div class="mt-3 d-flex align-items-center gap-3">
+        <div class="mt-3 d-flex align-items-center gap-3" style="
+    padding-left: 20px;
+">
           <div class="social-links" aria-label="Mạng xã hội">
             <a href="#" class="text-light me-2" aria-label="Facebook" title="Facebook"><i class="fab fa-facebook fa-lg"></i></a>
             <a href="#" class="text-light me-2" aria-label="Instagram" title="Instagram"><i class="fab fa-instagram fa-lg"></i></a>
             <a href="#" class="text-light me-2" aria-label="YouTube" title="YouTube"><i class="fab fa-youtube fa-lg"></i></a>
             <a href="#" class="text-light" aria-label="LinkedIn" title="LinkedIn"><i class="fab fa-linkedin fa-lg"></i></a>
           </div>
-          <div class="payment-icons text-muted" aria-hidden="true">
+         
+        </div>
+        <div class="mt-3 d-flex align-items-center gap-3" style="
+    padding-left: 20px;
+">
+        	 <div class="payment-icons text-muted" aria-hidden="true">
             <i class="fab fa-cc-visa fa-2x me-2"></i>
             <i class="fab fa-cc-mastercard fa-2x me-2"></i>
             <i class="fab fa-cc-paypal fa-2x"></i>
           </div>
-        </div>
+        </div>	
+        
       </div>
     </div>
 
