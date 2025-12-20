@@ -68,4 +68,27 @@ public class ProductServiceImpl implements ProductService {
     public long countDiscountedActive() {
         return productDAO.countDiscountedActive();
     }
+
+    @Override
+    public List<Product> findByCategoryWithPagination(int categoryId, int page, int limit) {
+        int offset = (page - 1) * limit;
+        return productDAO.findByCategory(categoryId, offset, limit);
+    }
+
+    @Override
+    public long countByCategory(int categoryId) {
+        return productDAO.countByCategory(categoryId);
+    }
+
+    @Override
+    public List<Product> findActiveSorted(int page, int limit, String sortBy) {
+        int offset = (page - 1) * limit;
+        return productDAO.findActiveSorted(offset, limit, sortBy);
+    }
+
+    @Override
+    public List<Product> findByCategorySorted(int categoryId, int page, int limit, String sortBy) {
+        int offset = (page - 1) * limit;
+        return productDAO.findByCategorySorted(categoryId, offset, limit, sortBy);
+    }
 }
