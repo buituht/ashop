@@ -19,12 +19,7 @@
     <li><a   href="#" data-title="Cài đặt hệ thống"><i class="fas fa-cog icon me-2" aria-hidden="true"></i> Cài đặt hệ thống</a></li>
   </ul>
   <br>
-  <div class="input-group">
-    <input type="text" class="form-control" placeholder="Tìm kiếm.." aria-label="Tìm kiếm">
-    <span class="input-group-text btn-search">
-      <i class="fas fa-search" aria-hidden="true"></i>
-    </span>
-  </div>
+
 </div>
 
 
