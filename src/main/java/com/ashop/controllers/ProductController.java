@@ -1,8 +1,11 @@
 package com.ashop.controllers;
 
 import com.ashop.entity.Product;
+import com.ashop.entity.Category;
 import com.ashop.services.ProductService;
+import com.ashop.services.CategoryService;
 import com.ashop.services.impl.ProductServiceImpl;
+import com.ashop.services.impl.CategoryServiceImpl;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -17,6 +20,7 @@ public class ProductController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     private final ProductService productService = new ProductServiceImpl();
+    private final CategoryService categoryService = new CategoryServiceImpl();
     private static final int ITEMS_PER_PAGE = 12;
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -36,14 +40,34 @@ public class ProductController extends HttpServlet {
                     }
                 }
 
-                long total = productService.countActive();
-                int totalPages = (int) Math.ceil((double) total / ITEMS_PER_PAGE);
+                // Hỗ trợ lọc theo danh mục
+                String categoryParam = request.getParameter("category");
+                List<Product> products;
+                long total;
+                
+                if (categoryParam != null && !categoryParam.isEmpty()) {
+                    try {
+                        int categoryId = Integer.parseInt(categoryParam);
+                        products = productService.findByCategoryWithPagination(categoryId, currentPage, ITEMS_PER_PAGE);
+                        total = productService.countByCategory(categoryId);
+                        request.setAttribute("selectedCategory", categoryId);
+                    } catch (NumberFormatException e) {
+                        products = productService.findActiveWithPagination(currentPage, ITEMS_PER_PAGE);
+                        total = productService.countActive();
+                    }
+                } else {
+                    products = productService.findActiveWithPagination(currentPage, ITEMS_PER_PAGE);
+                    total = productService.countActive();
+                }
 
-                List<Product> products = productService.findActiveWithPagination(currentPage, ITEMS_PER_PAGE);
+                int totalPages = (int) Math.ceil((double) total / ITEMS_PER_PAGE);
+                List<Category> categories = categoryService.findActive();
 
                 request.setAttribute("products", products);
+                request.setAttribute("categories", categories);
                 request.setAttribute("currentPage", currentPage);
                 request.setAttribute("totalPages", totalPages);
+                request.setAttribute("totalItems", total);
                 request.getRequestDispatcher("/views/product-list.jsp").forward(request, response);
 
             } else if (servletPath.equals("/product")) {
