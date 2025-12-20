@@ -27,23 +27,62 @@ public class ContactsAdminController extends HttpServlet {
             return;
         }
 
+        // Pagination params
+        int page = 1;
+        int size = 10; // default page size
+        String pageParam = request.getParameter("page");
+        String sizeParam = request.getParameter("size");
+        try { if (pageParam != null) page = Math.max(1, Integer.parseInt(pageParam)); } catch (NumberFormatException ignored) {}
+        try { if (sizeParam != null) size = Math.max(1, Integer.parseInt(sizeParam)); } catch (NumberFormatException ignored) {}
+
+        long total = contactService.count();
+        int totalPages = (int) Math.max(1, Math.ceil(total / (double) size));
+        if (page > totalPages) page = totalPages;
+
+        List<Contact> contacts = contactService.findWithPagination(page, size);
+
+        request.setAttribute("contacts", contacts);
+        request.setAttribute("currentPage", page);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("pageSize", size);
+
+        request.getRequestDispatcher("/views/admin/contacts.jsp").forward(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String servletPath = request.getServletPath();
+        User user = (User) request.getSession().getAttribute("currentUser");
+        if (user == null /*|| !user.isAdmin()*/) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
         if ("/admin/contacts/delete".equals(servletPath)) {
             String idParam = request.getParameter("id");
             if (idParam != null) {
                 try {
                     int id = Integer.parseInt(idParam);
                     Contact c = contactService.findById(id);
-                    if (c != null) contactService.delete(c);
+                    if (c != null) {
+                        contactService.delete(c);
+                        request.getSession().setAttribute("message", "Xóa liên hệ thành công");
+                    } else {
+                        request.getSession().setAttribute("message", "Liên hệ không tồn tại");
+                    }
                 } catch (NumberFormatException e) {
-                    // ignore
+                    request.getSession().setAttribute("message", "ID liên hệ không hợp lệ");
+                } catch (Exception ex) {
+                    request.getSession().setAttribute("message", "Đã xảy ra lỗi khi xóa liên hệ");
                 }
+            } else {
+                request.getSession().setAttribute("message", "Thiếu tham số id");
             }
             response.sendRedirect(request.getContextPath() + "/admin/contacts");
             return;
         }
 
-        List<Contact> contacts = contactService.findAll();
-        request.setAttribute("contacts", contacts);
-        request.getRequestDispatcher("/views/admin/contacts.jsp").forward(request, response);
+        // Default fallback
+        response.sendRedirect(request.getContextPath() + "/admin/contacts");
     }
 }
