@@ -55,6 +55,35 @@ public class UserServiceImpl implements UserService {
         }
         return false;
     }
+
+    @Override
+    public boolean lockUser(int userId) {
+        User user = userDAO.findById(userId);
+        if (user == null) return false;
+        try {
+            user.setStatus(false);
+            userDAO.update(user);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public boolean deleteIfNoOrders(int userId) {
+        try {
+            long orders = userDAO.countOrdersByUser(userId);
+            if (orders > 0) return false; // cannot delete
+            User user = userDAO.findById(userId);
+            if (user == null) return false;
+            userDAO.remove(user);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     
     @Override
     public User login(String username, String rawPassword) {
