@@ -96,12 +96,14 @@
             <span style="font-size:1rem;">ADMIN PANEL</span>
         </a>
 
-        <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#adminTopNav" aria-controls="adminTopNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"><div></div></span>
-        </button>
+  
 
-        <div class="collapse navbar-collapse" id="adminTopNav">
-            <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+        <div class="collapse navbar-collapse" style="
+    padding-top: 12px;
+" id="adminTopNav">
+            <ul class="navbar-nav mx-auto mb-2 mb-lg-0"  style="
+    list-style: none;
+">
                 <li class="nav-item">
                     <a class="nav-link" href="${pageContext.request.contextPath}" data-path="/admin/dashboard">
                         <i class="fas fa-home fa-lg"></i> Trang chủ
@@ -129,13 +131,8 @@
                 </li>
             </ul>
 
-            <ul class="navbar-nav ms-auto align-items-center">
-                <li class="nav-item me-3 d-none d-md-block">
-                    <form action="${pageContext.request.contextPath}/admin/search" method="get" class="d-flex align-items-center">
-                        <input class="form-control form-control-sm search-input" type="search" name="q" placeholder="Tìm kiếm..." aria-label="Search">
-                        <button class="btn btn-sm btn-outline-light ms-2" type="submit"><i class="fas fa-search"></i></button>
-                    </form>
-                </li>
+            <ul class="navbar-nav ms-auto align-items-center" style="float: right;list-style: none;">
+             
 
                 <li class="nav-item dropdown me-3">
                     <a class="nav-link position-relative" href="#" id="notifDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -159,7 +156,7 @@
                 </li>
 
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle d-flex align-items-right"  href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fas fa-user-circle fa-2x me-2"></i>
                         <div class="d-none d-lg-block text-start">
                             <div style="line-height:1; font-weight:700;"> <c:out value="${currentUser.fullName}"/> </div>
