@@ -48,4 +48,29 @@ public class ContactDAOImpl implements ContactDAO {
         em.getTransaction().commit();
         em.close();
     }
+
+    @Override
+    public long count() {
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            Long c = em.createQuery("SELECT COUNT(c) FROM Contact c", Long.class).getSingleResult();
+            return c != null ? c : 0L;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Contact> findWithPagination(int page, int size) {
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            TypedQuery<Contact> q = em.createQuery("SELECT c FROM Contact c ORDER BY c.createdAt DESC", Contact.class);
+            int first = Math.max(0, (page - 1) * size);
+            q.setFirstResult(first);
+            q.setMaxResults(size);
+            return q.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }
