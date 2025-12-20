@@ -32,7 +32,6 @@
             e.printStackTrace();
         }
     }
-    
 %>
 
 <main>
