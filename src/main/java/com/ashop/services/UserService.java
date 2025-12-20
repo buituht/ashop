@@ -47,4 +47,18 @@ public interface UserService {
     boolean registerWithEmailVerification(String username, String password, String fullName, String email, String phone, String address, String role, Boolean status, String avatar, String appUrl) throws Exception;
     boolean verifyToken(String token);
     User findByUsername(String username);
+
+    /**
+     * Khóa hoặc mở khóa người dùng.
+     * @param userId ID của người dùng cần khóa/mở khóa.
+     * @return true nếu thao tác thành công, false nếu ngược lại.
+     */
+    boolean lockUser(int userId);
+
+    /**
+     * Xóa người dùng nếu không có đơn hàng nào liên quan.
+     * @param userId ID của người dùng cần xóa.
+     * @return true nếu xóa thành công, false nếu ngược lại.
+     */
+    boolean deleteIfNoOrders(int userId);
 }
