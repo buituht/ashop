@@ -69,12 +69,21 @@ public class LoginController extends HttpServlet {
                     Cookie userCookie = new Cookie("username", username);
                     userCookie.setMaxAge(60 * 60 * 24 * 7); // Cookie tồn tại 7 ngày
                     userCookie.setPath(req.getContextPath());
+                    // security flags
+                    userCookie.setHttpOnly(true);
+                    if (req.isSecure()) {
+                        userCookie.setSecure(true);
+                    }
                     resp.addCookie(userCookie);
                 } else {
                     // Xóa cookie nếu nó tồn tại và người dùng bỏ chọn "Nhớ mật khẩu"
                     Cookie userCookie = new Cookie("username", "");
                     userCookie.setMaxAge(0);
                     userCookie.setPath(req.getContextPath());
+                    userCookie.setHttpOnly(true);
+                    if (req.isSecure()) {
+                        userCookie.setSecure(true);
+                    }
                     resp.addCookie(userCookie);
                 }
 
