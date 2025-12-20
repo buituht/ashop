@@ -99,7 +99,8 @@ public class ProductFormController extends HttpServlet {
             BigDecimal salePrice = safeParseBigDecimal(request.getParameter("salePrice")); 
             Integer quantity = safeParseInteger(request.getParameter("quantity"));
             
-            boolean status = "on".equalsIgnoreCase(request.getParameter("status"));
+            String statusParam = request.getParameter("status");
+            boolean status = statusParam != null && ("on".equalsIgnoreCase(statusParam) || "true".equalsIgnoreCase(statusParam) || "1".equals(statusParam));
             
             // 2. Xử lý Slug
             String slug = toSlug(productName); 
@@ -196,7 +197,12 @@ public class ProductFormController extends HttpServlet {
             errorProduct.setQuantity(safeParseInteger(request.getParameter("quantity")));
             errorProduct.setDescription(request.getParameter("description"));
             errorProduct.setImage(imagePath != null ? imagePath : oldImage);
-            errorProduct.setStatus("on".equalsIgnoreCase(request.getParameter("status"))); 
+            
+            // Hỗ trợ nhiều giá trị checkbox (html có thể trả về "true" hoặc custom value)
+            String statusParamErr = request.getParameter("status");
+            boolean errorStatus = statusParamErr != null && (statusParamErr.equalsIgnoreCase("on")
+                    || statusParamErr.equalsIgnoreCase("true") || statusParamErr.equals("1"));
+            errorProduct.setStatus(errorStatus);
             
             // Set lại Category cho Dropdown
             String errorCategoryIdStr = request.getParameter("categoryId");
@@ -212,7 +218,8 @@ public class ProductFormController extends HttpServlet {
             // 2. Set Attributes và Forward
             request.setAttribute("product", errorProduct);
             request.setAttribute("error", "Lỗi xử lý: " + e.getMessage());
-            request.getRequestDispatcher("/views/admin/product/product-form.jsp").forward(request, response);
+            // Forward tới đúng JSP form (đường dẫn chính xác trong project)
+            request.getRequestDispatcher("/views/admin/product-form.jsp").forward(request, response);
         }
     }
     
