@@ -116,7 +116,7 @@ color:#fff;
             <!-- User dropdown: add user-dropdown class so hover only affects this menu -->
             <li class="nav-item dropdown user-dropdown">
               <!-- Use a button for dropdown toggle to avoid HTML navigation issues -->
-              <button class="nav-link dropdown-toggle user-name btn btn-link" id="userDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" style="text-decoration:none;">
+              <button class="nav-link dropdown-toggle user-name btn btn-link" id="userDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" style="text-decoration:none;color: #4f4f4f;padding-top: 8px">
                 <i class="fas fa-user-circle"> </i>${user.fullName}
               </button>
                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
