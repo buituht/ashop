@@ -29,7 +29,7 @@
                             <a href="${sessionScope.verificationLink}" target="_blank">${sessionScope.verificationLink}</a>
                         </div>
                     </c:if>
-+
+
                     <%-- Form Đăng Nhập --%>
                     <form action="<c:url value="/login"/>" method="post">
                         
