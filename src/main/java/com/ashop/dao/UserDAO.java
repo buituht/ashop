@@ -17,4 +17,7 @@ public interface UserDAO {
     User findByVerificationToken(String token);
     boolean verifyUserEmail(User user);
     User findByEmail(String email); // Find user by email
+
+    // Số lượng đơn hàng của user (dùng để quyết định có thể xóa user hay không)
+    long countOrdersByUser(int userId);
 }
