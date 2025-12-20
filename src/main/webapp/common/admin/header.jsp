@@ -160,7 +160,7 @@
                         <i class="fas fa-user-circle fa-2x me-2"></i>
                         <div class="d-none d-lg-block text-start">
                             <div style="line-height:1; font-weight:700;"> <c:out value="${currentUser.fullName}"/> </div>
-                            <div style="font-size:.8rem; color:rgba(255,255,255,.8);"> <c:out value="${currentUser.username}"/> </div>
+                            <div style="font-size:.8rem; color:rgba(255,255,255,.8);"> <c:out value="${currentUser.username}"/> |  <a class="dropdown-item text-danger" href="${pageContext.request.contextPath}/logout"><i class="fas fa-sign-out-alt me-2"></i> Đăng xuất</a></div>
                         </div>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
