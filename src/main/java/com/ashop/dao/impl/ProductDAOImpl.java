@@ -169,4 +169,105 @@ public class ProductDAOImpl implements ProductDAO {
             em.close();
         }
     }
+
+    @Override
+    public List<Product> findByCategory(int categoryId, int offset, int limit) {
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            TypedQuery<Product> query = em.createQuery(
+                "SELECT p FROM Product p LEFT JOIN FETCH p.category WHERE p.status = true AND p.category.categoryId = :categoryId ORDER BY p.productId DESC", Product.class);
+            query.setParameter("categoryId", categoryId);
+            query.setFirstResult(offset);
+            query.setMaxResults(limit);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public long countByCategory(int categoryId) {
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            return em.createQuery(
+                "SELECT COUNT(p) FROM Product p WHERE p.status = true AND p.category.categoryId = :categoryId", Long.class)
+                .setParameter("categoryId", categoryId)
+                .getSingleResult();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Product> findActiveSorted(int offset, int limit, String sortBy) {
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            String orderBy = "ORDER BY p.productId DESC"; // default
+            
+            if (sortBy != null) {
+                switch (sortBy) {
+                    case "price-asc":
+                        orderBy = "ORDER BY p.price ASC, p.productId DESC";
+                        break;
+                    case "price-desc":
+                        orderBy = "ORDER BY p.price DESC, p.productId DESC";
+                        break;
+                    case "name-asc":
+                        orderBy = "ORDER BY p.productName ASC, p.productId DESC";
+                        break;
+                    case "name-desc":
+                        orderBy = "ORDER BY p.productName DESC, p.productId DESC";
+                        break;
+                    case "newest":
+                        orderBy = "ORDER BY p.createdAt DESC, p.productId DESC";
+                        break;
+                }
+            }
+            
+            TypedQuery<Product> query = em.createQuery(
+                "SELECT p FROM Product p LEFT JOIN FETCH p.category WHERE p.status = true " + orderBy, Product.class);
+            query.setFirstResult(offset);
+            query.setMaxResults(limit);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Product> findByCategorySorted(int categoryId, int offset, int limit, String sortBy) {
+        EntityManager em = JPAConfig.getEntityManager();
+        try {
+            String orderBy = "ORDER BY p.productId DESC"; // default
+            
+            if (sortBy != null) {
+                switch (sortBy) {
+                    case "price-asc":
+                        orderBy = "ORDER BY p.price ASC, p.productId DESC";
+                        break;
+                    case "price-desc":
+                        orderBy = "ORDER BY p.price DESC, p.productId DESC";
+                        break;
+                    case "name-asc":
+                        orderBy = "ORDER BY p.productName ASC, p.productId DESC";
+                        break;
+                    case "name-desc":
+                        orderBy = "ORDER BY p.productName DESC, p.productId DESC";
+                        break;
+                    case "newest":
+                        orderBy = "ORDER BY p.createdAt DESC, p.productId DESC";
+                        break;
+                }
+            }
+            
+            TypedQuery<Product> query = em.createQuery(
+                "SELECT p FROM Product p LEFT JOIN FETCH p.category WHERE p.status = true AND p.category.categoryId = :categoryId " + orderBy, Product.class);
+            query.setParameter("categoryId", categoryId);
+            query.setFirstResult(offset);
+            query.setMaxResults(limit);
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }
